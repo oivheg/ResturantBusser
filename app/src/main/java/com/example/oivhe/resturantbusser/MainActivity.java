@@ -15,10 +15,10 @@ import com.example.oivhe.resturantbusser.Communication.Client;
 
 public class MainActivity extends AppCompatActivity {
 
-    String _user;
+
     Button btn;
     TextView response;
-    EditText editTextAddress, editTextPort;
+    EditText editTextAddress, editTextPort,_user;
     Button buttonConnect, buttonClear;
     SharedPreferences prefs = null;
 
@@ -30,7 +30,7 @@ public class MainActivity extends AppCompatActivity {
         prefs = getSharedPreferences("com.example.oivhe.resturantbusser", MODE_PRIVATE);
 
         btn = (Button) findViewById(R.id.button);
-        _user = "oivheg";
+        _user = (EditText) findViewById(R.id.txtuser);
 
         editTextAddress = (EditText) findViewById(R.id.addressEditText);
         editTextPort = (EditText) findViewById(R.id.portEditText);
@@ -38,15 +38,24 @@ public class MainActivity extends AppCompatActivity {
         buttonClear = (Button) findViewById(R.id.clearButton);
         response = (TextView) findViewById(R.id.responseTextView);
 
-        Client myClient = new Client("192.168.43.1", 8080, response, "oivheg");
-        myClient.execute();
+
 
         buttonClear.setOnClickListener(new View.OnClickListener() {
 
             @Override
             public void onClick(View v) {
-                response.setText("");
+                response.setText("Hei");
             }
+        });
+
+        buttonConnect.setOnClickListener(new View.OnClickListener(){
+            @Override
+            public void onClick(View v) {
+
+                Client myClient = new Client("10.0.0.144", 8080, response, _user.getText().toString());
+                myClient.execute();
+            }
+
         });
     }
 
@@ -55,14 +64,14 @@ public class MainActivity extends AppCompatActivity {
     protected void onResume() {
         super.onResume();
 
-        if (prefs.getBoolean("firstrun", true)) {
+        /*if (prefs.getBoolean("firstrun", true)) {
             // Do first run stuff here then set 'firstrun' as false
             Intent intent = new Intent(this, CreateUser.class);
             startActivity(intent);
             this.finish();
             // using the following line to edit/commit prefs
             prefs.edit().putBoolean("firstrun", false).commit();
-        }
+        }*/
     }
 
 }

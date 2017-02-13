@@ -4,6 +4,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.OutputStreamWriter;
 import java.net.Socket;
 import java.net.UnknownHostException;
 import android.os.AsyncTask;
@@ -33,7 +34,9 @@ public class Client extends AsyncTask<Void, Void, Void> {
 		try {
 			socket = new Socket(dstAddress, dstPort);
             DataOutputStream DOS = new DataOutputStream(socket.getOutputStream());
-            DOS.writeUTF("Bruker");
+
+            DOS.writeUTF(_user);
+
 			ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream(
 					1024);
 			byte[] buffer = new byte[1024];
