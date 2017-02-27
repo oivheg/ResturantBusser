@@ -52,7 +52,7 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
 
-                Client myClient = new Client("10.0.0.144", 8080, response, _user.getText().toString());
+                Client myClient = new Client("10.0.0.135", 1433, response, _user.getText().toString());
                 myClient.execute();
             }
 
@@ -63,15 +63,18 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onResume() {
         super.onResume();
-
-        /*if (prefs.getBoolean("firstrun", true)) {
-            // Do first run stuff here then set 'firstrun' as false
-            Intent intent = new Intent(this, CreateUser.class);
-            startActivity(intent);
-            this.finish();
-            // using the following line to edit/commit prefs
-            prefs.edit().putBoolean("firstrun", false).commit();
-        }*/
+        Intent intent = new Intent(this, LoginActivity.class);
+        startActivity(intent);
+        this.finish();
+//firstrun is set to false, so this will start every time , normal state is true
+//        if (prefs.getBoolean("firstrun", false)) {
+//            // Do first run stuff here then set 'firstrun' as false
+//            Intent intent = new Intent(this, CreateUser.class);
+//            startActivity(intent);
+//            this.finish();
+//            // using the following line to edit/commit prefs
+//            prefs.edit().putBoolean("firstrun", false).commit();
+//        }
     }
 
 }

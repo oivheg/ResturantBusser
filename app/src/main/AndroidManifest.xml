@@ -17,6 +17,11 @@
         </intent-filter>
     </service>
 
+    <!-- To auto-complete the email text field in the login form with the user's emails -->
+    <uses-permission android:name="android.permission.GET_ACCOUNTS" />
+    <uses-permission android:name="android.permission.READ_PROFILE" />
+    <uses-permission android:name="android.permission.READ_CONTACTS" />
+
     <application
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
@@ -30,7 +35,15 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".CreateUser"></activity>
+        <activity android:name=".CreateUser" />
+        <activity
+            android:name=".LoginActivity"
+            android:label="@string/title_activity_login" />
+        <activity
+            android:name=".GUI.ActiveUser"
+            android:configChanges="orientation|keyboardHidden|screenSize"
+            android:label="@string/title_activity_active_user"
+            android:theme="@style/FullscreenTheme"></activity>
     </application>
 
 </manifest>
