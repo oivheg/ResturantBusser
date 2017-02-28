@@ -39,11 +39,7 @@
         <activity
             android:name=".LoginActivity"
             android:label="@string/title_activity_login" />
-        <activity
-            android:name=".GUI.ActiveUser"
-            android:configChanges="orientation|keyboardHidden|screenSize"
-            android:label="@string/title_activity_active_user"
-            android:theme="@style/FullscreenTheme"></activity>
+        <activity android:name=".GUI.ActiveUser"></activity>
     </application>
 
 </manifest>
