@@ -12,6 +12,7 @@ import android.widget.EditText;
 import android.widget.TextView;
 
 import com.example.oivhe.resturantbusser.Communication.Client;
+import com.example.oivhe.resturantbusser.GUI.ActiveUser;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -25,56 +26,61 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
 
+        Intent aboutScreen = new Intent(MainActivity.this, ActiveUser.class);
+        this.startActivity(aboutScreen);
+
+//        setContentView(R.layout.activity_main);
+//
         prefs = getSharedPreferences("com.example.oivhe.resturantbusser", MODE_PRIVATE);
-
-        btn = (Button) findViewById(R.id.button);
-        _user = (EditText) findViewById(R.id.txtuser);
-
-        editTextAddress = (EditText) findViewById(R.id.addressEditText);
-        editTextPort = (EditText) findViewById(R.id.portEditText);
-        buttonConnect = (Button) findViewById(R.id.connectButton);
-        buttonClear = (Button) findViewById(R.id.clearButton);
-        response = (TextView) findViewById(R.id.responseTextView);
-
-
-
-        buttonClear.setOnClickListener(new View.OnClickListener() {
-
-            @Override
-            public void onClick(View v) {
-                response.setText("Hei");
-            }
-        });
-
-        buttonConnect.setOnClickListener(new View.OnClickListener(){
-            @Override
-            public void onClick(View v) {
-
-                Client myClient = new Client("10.0.0.135", 1433, response, _user.getText().toString());
-                myClient.execute();
-            }
-
-        });
+//
+//        btn = (Button) findViewById(R.id.button);
+//        _user = (EditText) findViewById(R.id.txtuser);
+//
+//        editTextAddress = (EditText) findViewById(R.id.addressEditText);
+//        editTextPort = (EditText) findViewById(R.id.portEditText);
+//        buttonConnect = (Button) findViewById(R.id.connectButton);
+//        buttonClear = (Button) findViewById(R.id.clearButton);
+//        response = (TextView) findViewById(R.id.responseTextView);
+//
+//
+//
+//        buttonClear.setOnClickListener(new View.OnClickListener() {
+//
+//            @Override
+//            public void onClick(View v) {
+//                response.setText("Hei");
+//            }
+//        });
+//
+//        buttonConnect.setOnClickListener(new View.OnClickListener(){
+//            @Override
+//            public void onClick(View v) {
+//
+//                Client myClient = new Client("10.0.0.135", 1433, response, _user.getText().toString());
+//                myClient.execute();
+//            }
+//
+//        });
     }
 
 
     @Override
     protected void onResume() {
         super.onResume();
-        Intent intent = new Intent(this, LoginActivity.class);
-        startActivity(intent);
-        this.finish();
+
+
 //firstrun is set to false, so this will start every time , normal state is true
-//        if (prefs.getBoolean("firstrun", false)) {
-//            // Do first run stuff here then set 'firstrun' as false
+        if (prefs.getBoolean("firstrun", true)) {
+            Intent intent = new Intent(this, LoginActivity.class);
+            startActivity(intent);
+            // Do first run stuff here then set 'firstrun' as false
 //            Intent intent = new Intent(this, CreateUser.class);
 //            startActivity(intent);
-//            this.finish();
-//            // using the following line to edit/commit prefs
-//            prefs.edit().putBoolean("firstrun", false).commit();
-//        }
+            this.finish();
+            // using the following line to edit/commit prefs
+            prefs.edit().putBoolean("firstrun", false).commit();
+        }
     }
 
 }

@@ -16,14 +16,17 @@
 
         <Button
             android:text="At WORK"
+            android:onClick="onClick"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_weight="3"
             android:id="@+id/btnwork"
-            android:background="@android:color/holo_green_light" />
+            android:background="@android:color/holo_green_light"
+            />
 
         <Button
-            android:text="Going HOME"
+            android:text="You Are Home"
+            android:onClick="onClick"
             android:layout_width="match_parent"
             android:layout_weight="1"
             android:layout_height="wrap_content"
