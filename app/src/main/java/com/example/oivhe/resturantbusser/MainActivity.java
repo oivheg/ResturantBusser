@@ -16,6 +16,8 @@ import com.loopj.android.http.*;
 import com.example.oivhe.resturantbusser.Communication.Client;
 import com.example.oivhe.resturantbusser.GUI.ActiveUser;
 
+import cz.msebera.android.httpclient.Header;
+
 public class MainActivity extends AppCompatActivity {
 
 
@@ -64,6 +66,30 @@ public class MainActivity extends AppCompatActivity {
 //            }
 //
 //        });
+        AsyncHttpClient client = new AsyncHttpClient();
+        client.get("https://www.google.com", new AsyncHttpResponseHandler() {
+
+            @Override
+            public void onStart() {
+                // called before request is started
+            }
+
+            @Override
+            public void onSuccess(int statusCode, Header[] headers, byte[] response) {
+                // called when response HTTP status is "200 OK"
+            }
+
+            @Override
+            public void onFailure(int statusCode, Header[] headers, byte[] errorResponse, Throwable e) {
+                // called when response HTTP status is "4XX" (eg. 401, 403, 404)
+            }
+
+            @Override
+            public void onRetry(int retryNo) {
+                // called when request is retried
+            }
+        });
+
     }
 
 
@@ -83,6 +109,7 @@ public class MainActivity extends AppCompatActivity {
             // using the following line to edit/commit prefs
             prefs.edit().putBoolean("firstrun", false).commit();
         }
+
     }
 
 }
