@@ -11,6 +11,8 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 
+import com.loopj.android.http.*;
+
 import com.example.oivhe.resturantbusser.Communication.Client;
 import com.example.oivhe.resturantbusser.GUI.ActiveUser;
 
