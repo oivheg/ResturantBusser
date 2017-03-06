@@ -6,14 +6,14 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.Toast;
 
-import com.example.oivhe.resturantbusser.Communication.DBHelper;
-import com.example.oivhe.resturantbusser.LoginActivity;
-import com.example.oivhe.resturantbusser.MainActivity;
+import com.example.oivhe.resturantbusser.Communication.BusserRestClient;
 import com.example.oivhe.resturantbusser.R;
+import com.loopj.android.http.JsonHttpResponseHandler;
 
-import java.sql.Connection;
-import java.sql.ResultSet;
-import java.sql.Statement;
+import org.json.JSONArray;
+import org.json.JSONObject;
+
+import cz.msebera.android.httpclient.Header;
 
 public class ActiveUser extends AppCompatActivity implements View.OnClickListener {
     Button btnwork, btnhome;
@@ -64,46 +64,73 @@ public class ActiveUser extends AppCompatActivity implements View.OnClickListene
 
     public void CommunicateDB(String user, boolean atWork, boolean update) {
 
-        Connection con;
 
+        BusserRestClient.get("UserAPI/ViewUser/1", null, new JsonHttpResponseHandler() {
+            //client1.get(url, new JsonHttpResponseHandler() {
+            @Override
+            public void onSuccess(int statusCode, Header[] headers, JSONArray success) {
+                System.out.println("Active User    :" +
+                        success);
+                AtWork = true;
 
-        try {
-            DBHelper connectDb = new DBHelper();
-            con = connectDb.connectionclass();
-            if (con == null) {
-
-            } else {
-
-                // Continue here, trying to show al info from the USERS Table .
-//                String query = "\n" +
-//                        "select * from Users where UserName ='" + User + "';";
-                if (update) {
-                    String query = "\n" +
-                            "update Users set Active ='" + atWork + "' where UserName ='" + user + "';";
-
-                    Statement stmt = con.createStatement();
-//                ResultSet rs = stmt.executeQuery(query); executeQuery are used to get a result back, executeUpdate aer for only runing sql
-                    stmt.executeUpdate(query);
-
-                } else {
-                    String query = "\n" +
-                            "select Active from Users where UserName ='" + user + "';";
-                    Statement stmt = con.createStatement();
-                    ResultSet rs = stmt.executeQuery(query);
-                    while (rs.next()) {
-                        String TMP = rs.getString("Active").trim();
-                        if (TMP == "1") {
-                            AtWork = true;
-                        }
-                    }
-
-
-                }
             }
 
-        } catch (Exception ex) {
-            System.out.print(ex.getMessage());
-        }
+            @Override
+            public void onSuccess(int statusCode, Header headers[], JSONObject success) {
+                // Root JSON in response is an dictionary i.e { "data : [ ... ] }
+                // Handle resulting parsed JSON response here
+
+                System.out.println("Active JSON repsone    :" +
+                        success);
+
+            }
+
+            @Override
+            public void onFailure(int statusCode, Header[] headers, String res, Throwable t) {
+                // called when response HTTP status is "4XX" (eg. 401, 403, 404)
+                System.out.print("ERROR" + res + "  status  " + statusCode + " Header:  " + headers);
+            }
+        });
+//        Connection con;
+//
+//
+//        try {
+//            DBHelper connectDb = new DBHelper();
+//            con = connectDb.connectionclass();
+//            if (con == null) {
+//
+//            } else {
+//
+//                // Continue here, trying to show al info from the USERS Table .
+////                String query = "\n" +
+////                        "select * from Users where UserName ='" + User + "';";
+//                if (update) {
+//                    String query = "\n" +
+//                            "update Users set Active ='" + atWork + "' where UserName ='" + user + "';";
+//
+//                    Statement stmt = con.createStatement();
+////                ResultSet rs = stmt.executeQuery(query); executeQuery are used to get a result back, executeUpdate aer for only runing sql
+//                    stmt.executeUpdate(query);
+//
+//                } else {
+//                    String query = "\n" +
+//                            "select Active from Users where UserName ='" + user + "';";
+//                    Statement stmt = con.createStatement();
+//                    ResultSet rs = stmt.executeQuery(query);
+//                    while (rs.next()) {
+//                        String TMP = rs.getString("Active").trim();
+//                        if (TMP == "1") {
+//                            AtWork = true;
+//                        }
+//                    }
+//
+//
+//                }
+//            }
+//
+//        } catch (Exception ex) {
+//            System.out.print(ex.getMessage());
+//        }
     }
 
 }

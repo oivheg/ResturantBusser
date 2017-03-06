@@ -11,10 +11,19 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 
+
+import com.android.volley.Response;
+import com.example.oivhe.resturantbusser.Communication.BusserRestClient;
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import com.loopj.android.http.*;
 
 import com.example.oivhe.resturantbusser.Communication.Client;
 import com.example.oivhe.resturantbusser.GUI.ActiveUser;
+
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import cz.msebera.android.httpclient.Header;
 
@@ -66,27 +75,62 @@ public class MainActivity extends AppCompatActivity {
 //            }
 //
 //        });
-        AsyncHttpClient client = new AsyncHttpClient();
-        client.get("https://www.google.com", new AsyncHttpResponseHandler() {
+//        AsyncHttpClient client = new AsyncHttpClient();
+//        client.get("http://10.0.0.159:51080/api/UserAPI/GetAllActiveusers", new AsyncHttpResponseHandler() {
+//
+//            @Override
+//            public void onStart() {
+//                // called before request is started
+//            }
+//
+//            @Override
+//            public void onSuccess(int statusCode, Header[] headers, byte[] response) {
+//                // called when response HTTP status is "200 OK"
+//                System.out.println("Got response from google, connection ok     " + response.toString());
+//
+//            }
+//
+//            @Override
+//            public void onFailure(int statusCode, Header[] headers, byte[] errorResponse, Throwable e) {
+//                // called when response HTTP status is "4XX" (eg. 401, 403, 404)
+//            }
+//
+//            @Override
+//            public void onRetry(int retryNo) {
+//                // called when request is retried
+//            }
+//        });
 
+
+//
+//        String url = "http://10.0.0.159:51080/api/UserAPI/GetAllActiveusers";
+//        AsyncHttpClient client1 = new AsyncHttpClient();
+//        RequestParams params = new RequestParams();
+        //  params.put("q", "android");
+        //  params.put("rsz", "8");
+        BusserRestClient.get("UserAPI/GetAllActiveusers", null, new JsonHttpResponseHandler() {
+            //client1.get(url, new JsonHttpResponseHandler() {
             @Override
-            public void onStart() {
-                // called before request is started
+            public void onSuccess(int statusCode, Header[] headers, JSONArray success) {
+                System.out.println(" MAIN JSON ARRAY repsone    :" +
+                        success);
+
+
+            }
+            @Override
+            public void onSuccess(int statusCode, Header headers[], JSONObject success) {
+                // Root JSON in response is an dictionary i.e { "data : [ ... ] }
+                // Handle resulting parsed JSON response here
+
+                System.out.println(" MAIn JSON repsone    :" +
+                        success);
+
             }
 
             @Override
-            public void onSuccess(int statusCode, Header[] headers, byte[] response) {
-                // called when response HTTP status is "200 OK"
-            }
-
-            @Override
-            public void onFailure(int statusCode, Header[] headers, byte[] errorResponse, Throwable e) {
+            public void onFailure(int statusCode, Header[] headers, String res, Throwable t) {
                 // called when response HTTP status is "4XX" (eg. 401, 403, 404)
-            }
-
-            @Override
-            public void onRetry(int retryNo) {
-                // called when request is retried
+                System.out.print("ERROR" + res + "  status  " + statusCode + " Header:  " + headers);
             }
         });
 
