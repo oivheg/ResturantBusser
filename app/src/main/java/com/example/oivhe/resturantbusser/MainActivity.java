@@ -1,38 +1,21 @@
 package com.example.oivhe.resturantbusser;
 
-import android.app.Notification;
-import android.app.NotificationManager;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.view.View;
+import android.support.v7.app.AppCompatActivity;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 
-
-import com.android.volley.Response;
-import com.example.oivhe.resturantbusser.Communication.BusserRestClient;
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
-import com.loopj.android.http.*;
-
-import com.example.oivhe.resturantbusser.Communication.Client;
 import com.example.oivhe.resturantbusser.GUI.ActiveUser;
-
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
-
-import cz.msebera.android.httpclient.Header;
 
 public class MainActivity extends AppCompatActivity {
 
 
     Button btn;
     TextView response;
-    EditText editTextAddress, editTextPort,_user;
+    EditText editTextAddress, editTextPort, _user;
     Button buttonConnect, buttonClear;
     SharedPreferences prefs = null;
 
@@ -40,8 +23,8 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        Intent aboutScreen = new Intent(MainActivity.this, ActiveUser.class);
-        this.startActivity(aboutScreen);
+        Intent activeUser = new Intent(MainActivity.this, ActiveUser.class);
+        this.startActivity(activeUser);
 
 //        setContentView(R.layout.activity_main);
 //
@@ -108,31 +91,31 @@ public class MainActivity extends AppCompatActivity {
 //        RequestParams params = new RequestParams();
         //  params.put("q", "android");
         //  params.put("rsz", "8");
-        BusserRestClient.get("UserAPI/GetAllActiveusers", null, new JsonHttpResponseHandler() {
-            //client1.get(url, new JsonHttpResponseHandler() {
-            @Override
-            public void onSuccess(int statusCode, Header[] headers, JSONArray success) {
-                System.out.println(" MAIN JSON ARRAY repsone    :" +
-                        success);
-
-
-            }
-            @Override
-            public void onSuccess(int statusCode, Header headers[], JSONObject success) {
-                // Root JSON in response is an dictionary i.e { "data : [ ... ] }
-                // Handle resulting parsed JSON response here
-
-                System.out.println(" MAIn JSON repsone    :" +
-                        success);
-
-            }
-
-            @Override
-            public void onFailure(int statusCode, Header[] headers, String res, Throwable t) {
-                // called when response HTTP status is "4XX" (eg. 401, 403, 404)
-                System.out.print("ERROR" + res + "  status  " + statusCode + " Header:  " + headers);
-            }
-        });
+//        BusserRestClient.get("UserAPI/GetAllActiveusers", null, new JsonHttpResponseHandler() {
+//            //client1.get(url, new JsonHttpResponseHandler() {
+//            @Override
+//            public void onSuccess(int statusCode, Header[] headers, JSONArray success) {
+//                System.out.println(" MAIN JSON ARRAY repsone    :" +
+//                        success);
+//
+//
+//            }
+//            @Override
+//            public void onSuccess(int statusCode, Header headers[], JSONObject success) {
+//                // Root JSON in response is an dictionary i.e { "data : [ ... ] }
+//                // Handle resulting parsed JSON response here
+//
+//                System.out.println(" MAIn JSON repsone    :" +
+//                        success);
+//
+//            }
+//
+//            @Override
+//            public void onFailure(int statusCode, Header[] headers, String res, Throwable t) {
+//                // called when response HTTP status is "4XX" (eg. 401, 403, 404)
+//                System.out.print("ERROR" + res + "  status  " + statusCode + " Header:  " + headers);
+//            }
+//        });
 
     }
 

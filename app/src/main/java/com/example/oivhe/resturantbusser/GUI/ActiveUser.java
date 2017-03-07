@@ -9,9 +9,13 @@ import android.widget.Toast;
 import com.example.oivhe.resturantbusser.Communication.BusserRestClient;
 import com.example.oivhe.resturantbusser.R;
 import com.loopj.android.http.JsonHttpResponseHandler;
+import com.loopj.android.http.RequestParams;
 
 import org.json.JSONArray;
+import org.json.JSONException;
 import org.json.JSONObject;
+
+import java.util.HashMap;
 
 import cz.msebera.android.httpclient.Header;
 
@@ -27,13 +31,9 @@ public class ActiveUser extends AppCompatActivity implements View.OnClickListene
         setContentView(R.layout.activity_active_user);
         btnwork = (Button) findViewById(R.id.btnwork);
         btnhome = (Button) findViewById(R.id.btnhome);
-        CommunicateDB(mUser, true, false);
+        CommunicateDB(mUser, false, false);
 
-        if (AtWork) {
-            btnhome.setVisibility(View.GONE);
-        } else {
-            btnwork.setVisibility(View.GONE);
-        }
+
     }
 
     @Override
@@ -42,17 +42,16 @@ public class ActiveUser extends AppCompatActivity implements View.OnClickListene
         Toast toast;
         switch (v.getId()) {
             case R.id.btnwork:
+// btn GONE & visible will be removed after psot request is working
 
-                currentBTN.setVisibility(View.GONE);
-                btnhome.setVisibility(View.VISIBLE);
                 CommunicateDB(mUser, false, true);
                 toast = Toast.makeText(this, "btn work was clicked", Toast.LENGTH_SHORT);
                 toast.show();
                 break;
             case R.id.btnhome:
 
-                currentBTN.setVisibility(View.GONE);
-                btnwork.setVisibility(View.VISIBLE);
+//                currentBTN.setVisibility(View.GONE);
+//                btnwork.setVisibility(View.VISIBLE);
                 CommunicateDB(mUser, true, true);
                 toast = Toast.makeText(this, "btn Home was clicked", Toast.LENGTH_SHORT);
                 toast.show();
@@ -62,16 +61,36 @@ public class ActiveUser extends AppCompatActivity implements View.OnClickListene
 
     }
 
-    public void CommunicateDB(String user, boolean atWork, boolean update) {
+    public void CommunicateDB(String user, boolean isActive, boolean update) {
+        if (update) {
+            RequestParams params = new RequestParams();
+            params.put("UserId", 1);
+            params.put("UserName", user);
+            params.put("Active", isActive);
+            BusserRestClient.post("UserAPI/UserisActive", params, new JsonHttpResponseHandler() {
+                public void onSuccess(int statusCode, Header headers[], JSONObject success) {
+                    // Root JSON in response is an dictionary i.e { "data : [ ... ] }
+                    // Handle resulting parsed JSON response here
+
+                    System.out.println("Active usccesessfull push to server    :" +
+                            success);
+
+
+                }
+
+            });
+            setButtons(isActive);
+
+        } else {
+
 
 
         BusserRestClient.get("UserAPI/ViewUser/1", null, new JsonHttpResponseHandler() {
             //client1.get(url, new JsonHttpResponseHandler() {
             @Override
             public void onSuccess(int statusCode, Header[] headers, JSONArray success) {
-                System.out.println("Active User    :" +
+                System.out.println("Active User Array   :" +
                         success);
-                AtWork = true;
 
             }
 
@@ -80,8 +99,24 @@ public class ActiveUser extends AppCompatActivity implements View.OnClickListene
                 // Root JSON in response is an dictionary i.e { "data : [ ... ] }
                 // Handle resulting parsed JSON response here
 
-                System.out.println("Active JSON repsone    :" +
+                System.out.println("Active JSON Object repsone    :" +
                         success);
+                try {
+                    String in = "";
+                    JSONObject reader = success;
+                    String test = success.getString("UserName").trim();
+                    Boolean _isActive = success.getBoolean("Active");
+
+
+                    AtWork = false;
+                    setButtons(_isActive);
+
+                } catch (final JSONException e) {
+
+                }
+
+
+
 
             }
 
@@ -91,6 +126,8 @@ public class ActiveUser extends AppCompatActivity implements View.OnClickListene
                 System.out.print("ERROR" + res + "  status  " + statusCode + " Header:  " + headers);
             }
         });
+
+        }
 //        Connection con;
 //
 //
@@ -131,6 +168,21 @@ public class ActiveUser extends AppCompatActivity implements View.OnClickListene
 //        } catch (Exception ex) {
 //            System.out.print(ex.getMessage());
 //        }
+    }
+
+    private void setButtons(Boolean isActive) {
+        if (isActive) {
+            //At work
+            btnhome.setVisibility(View.GONE);
+            btnwork.setVisibility(View.VISIBLE);
+            System.out.println(" At WORk");
+        } else {
+
+            //at home
+            btnwork.setVisibility(View.GONE);
+            btnhome.setVisibility(View.VISIBLE);
+            System.out.println("at Home");
+        }
     }
 
 }
