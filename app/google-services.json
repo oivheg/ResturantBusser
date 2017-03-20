@@ -15,6 +15,14 @@
       },
       "oauth_client": [
         {
+          "client_id": "810661396254-d05a62hlbilehtl9ld5neonh64n40sq8.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.oivhe.resturantbusser",
+            "certificate_hash": "261bcac46bd5a4169a844224ab1b859cd2e5a35a"
+          }
+        },
+        {
           "client_id": "810661396254-mp3dic844ga8c28rgd37t0mbakathmiu.apps.googleusercontent.com",
           "client_type": 3
         }

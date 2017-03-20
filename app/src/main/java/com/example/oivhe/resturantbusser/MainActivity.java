@@ -3,16 +3,19 @@ package com.example.oivhe.resturantbusser;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 
 import com.example.oivhe.resturantbusser.GUI.ActiveUser;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 
 public class MainActivity extends AppCompatActivity {
-
-
+    private static final String TAG = "MainActivity";
     Button btn;
     TextView response;
     EditText editTextAddress, editTextPort, _user;
@@ -23,13 +26,16 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        Intent activeUser = new Intent(MainActivity.this, ActiveUser.class);
+        Intent activeUser = new Intent(MainActivity.this, FCMLogin.class);
         this.startActivity(activeUser);
 
 //        setContentView(R.layout.activity_main);
 //
         prefs = getSharedPreferences("com.example.oivhe.resturantbusser", MODE_PRIVATE);
 //
+
+
+    }
 //        btn = (Button) findViewById(R.id.button);
 //        _user = (EditText) findViewById(R.id.txtuser);
 //
@@ -89,8 +95,8 @@ public class MainActivity extends AppCompatActivity {
 //        String url = "http://10.0.0.159:51080/api/UserAPI/GetAllActiveusers";
 //        AsyncHttpClient client1 = new AsyncHttpClient();
 //        RequestParams params = new RequestParams();
-        //  params.put("q", "android");
-        //  params.put("rsz", "8");
+    //  params.put("q", "android");
+    //  params.put("rsz", "8");
 //        BusserRestClient.get("UserAPI/GetAllActiveusers", null, new JsonHttpResponseHandler() {
 //            //client1.get(url, new JsonHttpResponseHandler() {
 //            @Override
@@ -117,8 +123,6 @@ public class MainActivity extends AppCompatActivity {
 //            }
 //        });
 
-    }
-
 
     @Override
     protected void onResume() {
@@ -126,16 +130,16 @@ public class MainActivity extends AppCompatActivity {
 
 
 //firstrun is set to false, so this will start every time , normal state is true
-        if (prefs.getBoolean("firstrun", true)) {
-            Intent intent = new Intent(this, LoginActivity.class);
-            startActivity(intent);
-            // Do first run stuff here then set 'firstrun' as false
-//            Intent intent = new Intent(this, CreateUser.class);
+//        if (prefs.getBoolean("firstrun", false)) {
+//            Intent intent = new Intent(this, FCMLogin.class);
 //            startActivity(intent);
-            this.finish();
-            // using the following line to edit/commit prefs
-            prefs.edit().putBoolean("firstrun", false).commit();
-        }
+//            // Do first run stuff here then set 'firstrun' as false
+////            Intent intent = new Intent(this, CreateUser.class);
+////            startActivity(intent);
+//            this.finish();
+//            // using the following line to edit/commit prefs
+//            prefs.edit().putBoolean("firstrun", false).commit();
+//        }
 
     }
 

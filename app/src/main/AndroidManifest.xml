@@ -11,7 +11,7 @@
             <action android:name="com.google.firebase.MESSAGING_EVENT" />
         </intent-filter>
     </service>
-    <service android:name=".MyFirebaseInstanceIDService">
+    <service android:name=".FireIDService">
         <intent-filter>
             <action android:name="com.google.firebase.INSTANCE_ID_EVENT" />
         </intent-filter>
@@ -39,7 +39,11 @@
         <activity
             android:name=".LoginActivity"
             android:label="@string/title_activity_login" />
-        <activity android:name=".GUI.ActiveUser"></activity>
+        <activity android:name=".GUI.ActiveUser" />
+        <activity
+            android:name=".FCMLogin"
+            android:label="@string/title_activity_fcmlogin"
+            android:theme="@style/AppTheme" />
     </application>
 
 </manifest>
