@@ -1,5 +1,6 @@
 package com.example.oivhe.resturantbusser;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
@@ -9,6 +10,8 @@ import android.view.View;
 import android.widget.EditText;
 import android.widget.Toast;
 
+import com.example.oivhe.resturantbusser.Communication.BusserRestClient;
+import com.example.oivhe.resturantbusser.GUI.ActiveUser;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
@@ -16,6 +19,12 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.GetTokenResult;
 import com.google.firebase.iid.FirebaseInstanceId;
+import com.loopj.android.http.JsonHttpResponseHandler;
+import com.loopj.android.http.RequestParams;
+
+import org.json.JSONObject;
+
+import cz.msebera.android.httpclient.Header;
 
 public class FCMLogin extends AppCompatActivity implements View.OnClickListener {
     private static final String TAG = "FCMLogin";
@@ -37,7 +46,31 @@ public class FCMLogin extends AppCompatActivity implements View.OnClickListener 
                 if (user != null) {
                     // User is signed in
                     Log.d(TAG, "onAuthStateChanged:signed_in:" + user.getUid());
-                    getFCMToken();
+
+
+                    Toast.makeText(FCMLogin.this, " User is already logged in.",
+                            Toast.LENGTH_LONG).show();
+                    RequestParams params = new RequestParams();
+                    params.put("UserId", 1);
+                    params.put("AppId", getFCMToken());
+                    BusserRestClient.post("AppId", params, new JsonHttpResponseHandler() {
+                        public void onSuccess(int statusCode, Header headers[], JSONObject success) {
+                            // Root JSON in response is an dictionary i.e { "data : [ ... ] }
+                            // Handle resulting parsed JSON response here
+
+                            System.out.println("Active usccesessfull push to server    :" +
+                                    success);
+
+
+                        }
+
+                    });
+
+                    Intent activeUser = new Intent(FCMLogin.this, ActiveUser.class);
+                    startActivity(activeUser);
+
+//        setContentView(R.layout.activity_main);
+//
                 } else {
                     // User is signed out
                     Log.d(TAG, "onAuthStateChanged:signed_out");
@@ -55,12 +88,14 @@ public class FCMLogin extends AppCompatActivity implements View.OnClickListener 
 //        });
     }
 
-    private void getFCMToken() {
+    private String getFCMToken() {
 
         String tkn = FirebaseInstanceId.getInstance().getToken();
         Toast.makeText(FCMLogin.this, "Current token [" + tkn + "]",
                 Toast.LENGTH_LONG).show();
         Log.d("Ap:FCM", "Token [" + tkn + "]");
+
+        return tkn;
 
     }
 

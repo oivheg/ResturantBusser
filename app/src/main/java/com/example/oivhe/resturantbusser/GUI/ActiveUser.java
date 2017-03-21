@@ -67,7 +67,7 @@ public class ActiveUser extends AppCompatActivity implements View.OnClickListene
             params.put("UserId", 1);
             params.put("UserName", user);
             params.put("Active", isActive);
-            BusserRestClient.post("UserAPI/UserisActive", params, new JsonHttpResponseHandler() {
+            BusserRestClient.post("UserisActive", params, new JsonHttpResponseHandler() {
                 public void onSuccess(int statusCode, Header headers[], JSONObject success) {
                     // Root JSON in response is an dictionary i.e { "data : [ ... ] }
                     // Handle resulting parsed JSON response here
@@ -84,8 +84,7 @@ public class ActiveUser extends AppCompatActivity implements View.OnClickListene
         } else {
 
 
-
-        BusserRestClient.get("UserAPI/ViewUser/1", null, new JsonHttpResponseHandler() {
+            BusserRestClient.get("ViewUser/1", null, new JsonHttpResponseHandler() {
             //client1.get(url, new JsonHttpResponseHandler() {
             @Override
             public void onSuccess(int statusCode, Header[] headers, JSONArray success) {
