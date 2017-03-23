@@ -41,7 +41,7 @@
             android:label="@string/title_activity_login" />
         <activity android:name=".GUI.ActiveUser" />
         <activity
-            android:name=".FCMLogin"
+            android:name=".FCM.FCMLogin"
             android:label="@string/title_activity_fcmlogin"
             android:theme="@style/AppTheme" />
     </application>
