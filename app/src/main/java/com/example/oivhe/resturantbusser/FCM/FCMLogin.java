@@ -55,7 +55,7 @@ public class FCMLogin extends AppCompatActivity implements View.OnClickListener 
                     RequestParams params = new RequestParams();
                     params.put("UserId", 1);
                     params.put("AppId", getFCMToken());
-                    BusserRestClient.post("AppId", params, new JsonHttpResponseHandler() {
+                    BusserRestClient.post("ClientAppId", params, new JsonHttpResponseHandler() {
                         public void onSuccess(int statusCode, Header headers[], JSONObject success) {
                             // Root JSON in response is an dictionary i.e { "data : [ ... ] }
                             // Handle resulting parsed JSON response here
