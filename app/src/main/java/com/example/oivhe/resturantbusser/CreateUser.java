@@ -8,7 +8,7 @@ import android.widget.TextView;
 
 public class CreateUser extends AppCompatActivity implements View.OnClickListener {
 private Button reg;
-    private TextView name,surname,email,username,orgId,orgNumber;
+    private TextView userName, name, surname, email, username, orgId, orgNumber;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
