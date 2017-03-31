@@ -3,16 +3,17 @@ package com.example.oivhe.resturantbusser.FCM;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
 import com.example.oivhe.resturantbusser.Communication.BusserRestClient;
 import com.example.oivhe.resturantbusser.GUI.ActiveUser;
-import com.example.oivhe.resturantbusser.MainActivity;
 import com.example.oivhe.resturantbusser.R;
 import com.example.oivhe.resturantbusser.User;
 import com.google.android.gms.tasks.OnCompleteListener;
@@ -34,7 +35,13 @@ public class FCMLogin extends AppCompatActivity implements View.OnClickListener 
     private static final String TAG = "FCMLogin";
     User appuser = new User();
     String muser = "FCMolga";
+    String m_master;
     SharedPreferences prefs = null;
+    EditText field_email;
+    EditText field_pwd;
+    EditText field_userName;
+    EditText field_masterID;
+    boolean createuser = true;
     private FirebaseAuth mAuth;
     private FirebaseAuth.AuthStateListener mAuthListener;
 
@@ -45,7 +52,12 @@ public class FCMLogin extends AppCompatActivity implements View.OnClickListener 
         FirebaseApp.initializeApp(this);
         mAuth = FirebaseAuth.getInstance();
         muser = getIntent().getStringExtra("muser");
-
+        field_email = (EditText) findViewById(R.id.field_email);
+        field_pwd = (EditText) findViewById(R.id.field_password);
+        field_userName = (EditText) findViewById(R.id.field_UserName);
+        field_masterID = (EditText) findViewById(R.id.field_master);
+//        field_userName.setVisibility(View.GONE);
+        field_masterID.setVisibility(View.GONE);
         mAuthListener = new FirebaseAuth.AuthStateListener() {
             @Override
             public void onAuthStateChanged(@NonNull FirebaseAuth firebaseAuth) {
@@ -79,7 +91,15 @@ public class FCMLogin extends AppCompatActivity implements View.OnClickListener 
     private void getuser() {
         // creates the paramets to be sent in the BusserRestClient.
         RequestParams params = new RequestParams();
-        params.put("userName", muser);
+        params.put("UserName", muser.toLowerCase());
+        if (muser == null || muser.trim().isEmpty()) {
+            FirebaseAuth.getInstance().signOut();
+            Toast.makeText(FCMLogin.this, " Login ERROR, log in again", Toast.LENGTH_LONG).show();
+
+            return;
+        }
+
+        // The first BusserRestclient. get should be done to a general method so "others" can use it.
 
         BusserRestClient.get("finduser", params, new JsonHttpResponseHandler() {
             public void onSuccess(int statusCode, Header headers[], JSONObject success) {
@@ -99,22 +119,16 @@ public class FCMLogin extends AppCompatActivity implements View.OnClickListener 
                     RequestParams params = new RequestParams();
                     params.put("UserId", appuser.getUserid());
                     params.put("AppId", getFCMToken());
-                    BusserRestClient.post("ClientAppId", params, new JsonHttpResponseHandler() {
-                        public void onSuccess(int statusCode, Header headers[], JSONObject success) {
-                            // Root JSON in response is an dictionary i.e { "data : [ ... ] }
-                            // Handle resulting parsed JSON response here
+                    BusserPost("ClientAppId", params, "Active is sccesessfull push to server    :");
 
-                            System.out.println("Active is sccesessfull push to server    :" +
-                                    success);
-                        }
-                    });
 
                     //Creates the next intent, activity screen for the user to log in and out of work.
                     Intent activeUser = new Intent(FCMLogin.this, ActiveUser.class);
                     //gets and stores the username in shared preference, so that app can get that data on next start.
                     // right now this is inly username, but later might be all the data.
-                    prefs = getSharedPreferences("com.example.oivhe.resturantbusser", MODE_PRIVATE);
-                    prefs.edit().putString("muser", appuser.getUsername().toString()).commit();
+                    activeUser.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                    activeUser.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                    activeUser.addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);
                     activeUser.putExtra("muser", appuser.getUsername().toString());
                     activeUser.putExtra("muID", appuser.getUserid());
                     startActivity(activeUser);
@@ -150,19 +164,40 @@ public class FCMLogin extends AppCompatActivity implements View.OnClickListener 
 
     @Override
     public void onClick(View v) {
-        EditText email = (EditText) findViewById(R.id.field_email);
-        EditText pwd = (EditText) findViewById(R.id.field_password);
-        EditText userName = (EditText) findViewById(R.id.field_UserName);
-        muser = userName.getText().toString();
+
+        muser = field_userName.getText().toString();
+        prefs = getSharedPreferences("com.example.oivhe.resturantbusser", MODE_PRIVATE);
+        prefs.edit().putString("muser", muser).commit();
         switch (v.getId()) {
+
             case R.id.btnlogin:
-                signIn(email.getText().toString(), pwd.getText().toString());
+                signIn(field_email.getText().toString(), field_pwd.getText().toString());
                 break;
             case R.id.btncreateac:
-                createAccount(email.getText().toString(), pwd.getText().toString());
+
+                if (createuser) {
+//                    show the fields
+                    createuser = false;
+                    Button btncreate = (Button) findViewById(R.id.btncreateac);
+                    Button btnlogin = (Button) findViewById(R.id.btnlogin);
+                    btnlogin.setVisibility(View.GONE);
+                    btncreate.setText("Lag og logg inn");
+                    String tmpUser = field_userName.getText().toString();
+                    field_userName.setVisibility(View.VISIBLE);
+                    field_masterID.setVisibility(View.VISIBLE);
+
+
+                } else {
+                    m_master = field_masterID.getText().toString();
+                    createAccount(field_email.getText().toString(), field_pwd.getText().toString());
+
+                }
                 break;
+
             default:
         }
+
+
     }
 
     public void createAccount(String email, String passwd) {
@@ -180,27 +215,36 @@ public class FCMLogin extends AppCompatActivity implements View.OnClickListener 
                                     Toast.LENGTH_SHORT).show();
                         } else {
 // ------------- here code for creating new user and add to db should be done ---------------------------------------
-//                            RequestParams params = new RequestParams();
-//
-//                            params.put("UserId", 11);
-//                            //  params.put("UserName", userName.getText());
-//                            params.put("Active", false);
-//                            params.put("AppId", getFCMToken());
-//                            BusserRestClient.post("CreateUser", params, new JsonHttpResponseHandler() {
-//                                public void onSuccess(int statusCode, Header headers[], JSONObject success) {
-//                                    // Root JSON in response is an dictionary i.e { "data : [ ... ] }
-//                                    // Handle resulting parsed JSON response here
-//
-//                                    System.out.println("FCMLOGIN:   Created user usccesessfull push to server    :" +
-//                                            success);
-//                                }
-//
-//                            });
+
+                            RequestParams params = new RequestParams();
+
+                            //params.put("UserId", 11);
+                            params.put("UserName", muser.toLowerCase());
+                            params.put("Active", false);
+                            params.put("AppId", getFCMToken());
+                            params.put("MasterID", m_master);
+                            BusserPost("CreateUser", params, "FCMLOGIN:   Created user usccesessfull push to server    :");
                         }
 
                         // ...
                     }
                 });
+    }
+
+    private void BusserPost(String api, RequestParams _params, String message) {
+
+        final String _message = message;
+
+        BusserRestClient.post(api, _params, new JsonHttpResponseHandler() {
+            public void onSuccess(int statusCode, Header headers[], JSONObject success) {
+                // Root JSON in response is an dictionary i.e { "data : [ ... ] }
+                // Handle resulting parsed JSON response here
+
+                System.out.println(_message +
+                        success);
+            }
+
+        });
     }
 
     public void signIn(String email, String password) {
@@ -236,5 +280,26 @@ public class FCMLogin extends AppCompatActivity implements View.OnClickListener 
         if (mAuthListener != null) {
             mAuth.removeAuthStateListener(mAuthListener);
         }
+    }
+
+    boolean doubleBackToExitPressedOnce = false;
+
+    @Override
+    public void onBackPressed() {
+        if (doubleBackToExitPressedOnce) {
+            super.onBackPressed();
+            return;
+        }
+
+        this.doubleBackToExitPressedOnce = true;
+        Toast.makeText(this, "Press again to exit", Toast.LENGTH_SHORT).show();
+
+        new Handler().postDelayed(new Runnable() {
+
+            @Override
+            public void run() {
+                doubleBackToExitPressedOnce = false;
+            }
+        }, 2000);
     }
 }

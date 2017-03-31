@@ -23,16 +23,26 @@
                 android:id="@+id/Data"
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
-                android:orientation="horizontal"
+                android:orientation="vertical"
                 android:paddingLeft="16dp"
                 android:paddingRight="16dp">
 
                 <EditText
                     android:id="@+id/field_UserName"
-                    android:layout_width="0dp"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
-                    android:hint="UserName" />
+                    android:hint="UserName"
+                    android:inputType="text" />
+
+                <EditText
+                    android:id="@+id/field_master"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:ems="10"
+                    android:inputType="textPersonName|number"
+                    android:text="MasterID" />
 
 
             </LinearLayout>
