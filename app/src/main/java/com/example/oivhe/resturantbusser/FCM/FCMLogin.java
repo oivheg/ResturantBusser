@@ -40,7 +40,7 @@ public class FCMLogin extends AppCompatActivity implements View.OnClickListener 
     EditText field_email;
     EditText field_pwd;
     EditText field_userName;
-    EditText field_masterID;
+    EditText field_MasterKey;
     boolean createuser = true;
     private FirebaseAuth mAuth;
     private FirebaseAuth.AuthStateListener mAuthListener;
@@ -55,9 +55,9 @@ public class FCMLogin extends AppCompatActivity implements View.OnClickListener 
         field_email = (EditText) findViewById(R.id.field_email);
         field_pwd = (EditText) findViewById(R.id.field_password);
         field_userName = (EditText) findViewById(R.id.field_UserName);
-        field_masterID = (EditText) findViewById(R.id.field_master);
+        field_MasterKey = (EditText) findViewById(R.id.field_master);
 //        field_userName.setVisibility(View.GONE);
-        field_masterID.setVisibility(View.GONE);
+        field_MasterKey.setVisibility(View.GONE);
         mAuthListener = new FirebaseAuth.AuthStateListener() {
             @Override
             public void onAuthStateChanged(@NonNull FirebaseAuth firebaseAuth) {
@@ -65,8 +65,9 @@ public class FCMLogin extends AppCompatActivity implements View.OnClickListener 
                 if (user != null) {
                     // User is signed in
                     Log.d(TAG, "onAuthStateChanged:signed_in:" + user.getUid());
-                    Toast.makeText(FCMLogin.this, " User is already logged in.",
-                            Toast.LENGTH_LONG).show();
+                    System.out.println("FCMLogin:  User is already logged in");
+//                    Toast.makeText(FCMLogin.this, " User is already logged in.",
+//                            Toast.LENGTH_LONG).show();
                     // gets the user
                     getuser();
                 } else {
@@ -94,8 +95,8 @@ public class FCMLogin extends AppCompatActivity implements View.OnClickListener 
         params.put("UserName", muser.toLowerCase());
         if (muser == null || muser.trim().isEmpty()) {
             FirebaseAuth.getInstance().signOut();
-            Toast.makeText(FCMLogin.this, " Login ERROR, log in again", Toast.LENGTH_LONG).show();
-
+//            Toast.makeText(FCMLogin.this, " Login ERROR, log in again", Toast.LENGTH_LONG).show();
+            System.out.println("FCMLogin:  Login ERROR, log in again");
             return;
         }
 
@@ -110,12 +111,12 @@ public class FCMLogin extends AppCompatActivity implements View.OnClickListener 
 // gets the returnes Json object and and adds it tie each variable which is then sendt to the USER Class for storage.
                     JSONObject jsonobject = success;
                     int userid = jsonobject.getInt("UserId");
-                    int masterid = jsonobject.getInt("MasterID");
+                    String MasterKey = jsonobject.getString("MasterKey");
                     String username = jsonobject.getString("UserName");
                     String appid = jsonobject.getString("AppId");
                     boolean active = jsonobject.getBoolean("Active");
 
-                    updateUser(userid, masterid, username, appid, active);
+                    updateUser(userid, MasterKey, username, appid, active);
                     RequestParams params = new RequestParams();
                     params.put("UserId", appuser.getUserid());
                     params.put("AppId", getFCMToken());
@@ -135,17 +136,17 @@ public class FCMLogin extends AppCompatActivity implements View.OnClickListener 
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
-                System.out.println("FCMLOGIN:   Created user usccesessfull push to server    :" +
+                System.out.println("FCMLOGIN:   User FOUND on server    :" +
                         success);
             }
         });
     }
 
     //---------this update the USER class with correct data.------------
-    public void updateUser(int userid, int masterid, String username, String appid, boolean active) {
+    public void updateUser(int userid, String MasterKey, String username, String appid, boolean active) {
 
         appuser.setUserid(userid);
-        appuser.setMasterid(masterid);
+        appuser.setMasterKey(MasterKey);
         appuser.setUsername(username);
         appuser.setAppid(appid);
         appuser.setActive(active);
@@ -184,11 +185,11 @@ public class FCMLogin extends AppCompatActivity implements View.OnClickListener 
                     btncreate.setText("Lag og logg inn");
                     String tmpUser = field_userName.getText().toString();
                     field_userName.setVisibility(View.VISIBLE);
-                    field_masterID.setVisibility(View.VISIBLE);
+                    field_MasterKey.setVisibility(View.VISIBLE);
 
 
                 } else {
-                    m_master = field_masterID.getText().toString();
+                    m_master = field_MasterKey.getText().toString();
                     createAccount(field_email.getText().toString(), field_pwd.getText().toString());
 
                 }
@@ -222,7 +223,7 @@ public class FCMLogin extends AppCompatActivity implements View.OnClickListener 
                             params.put("UserName", muser.toLowerCase());
                             params.put("Active", false);
                             params.put("AppId", getFCMToken());
-                            params.put("MasterID", m_master);
+                            params.put("MasterKey", m_master);
                             BusserPost("CreateUser", params, "FCMLOGIN:   Created user usccesessfull push to server    :");
                         }
 

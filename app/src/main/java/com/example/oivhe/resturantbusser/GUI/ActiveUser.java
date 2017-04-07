@@ -1,9 +1,12 @@
 package com.example.oivhe.resturantbusser.GUI;
 
+import android.app.NotificationManager;
+import android.content.Context;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.v7.app.AppCompatActivity;
+import android.view.KeyEvent;
 import android.view.View;
 import android.widget.Button;
 import android.widget.Toast;
@@ -25,7 +28,7 @@ public class ActiveUser extends AppCompatActivity implements View.OnClickListene
     Button btnwork, btnhome, btnlogout;
     String mUser;
     int muserId;
-
+    boolean doubleBackToExitPressedOnce = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -41,6 +44,20 @@ public class ActiveUser extends AppCompatActivity implements View.OnClickListene
         CommunicateDB(mUser, false, false, false);
 
 
+    }
+
+    @Override
+    public boolean onKeyDown(int keyCode, KeyEvent event) {
+
+        if (keyCode == KeyEvent.KEYCODE_VOLUME_DOWN ||
+                keyCode == KeyEvent.KEYCODE_VOLUME_UP ||
+                keyCode == KeyEvent.KEYCODE_POWER) {
+            NotificationManager NotifVibration =
+                    (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
+            NotifVibration.cancelAll();
+            finish();
+        }
+        return super.onKeyDown(keyCode, event);
     }
 
     @Override
@@ -93,6 +110,7 @@ public class ActiveUser extends AppCompatActivity implements View.OnClickListene
             params.put("Active", _isActive);
             if (rmvAppId) {
                 params.put("AppID", "Logget out");
+                params.put("Active", false);
             }
             isActive = _isActive;
             BusserRestClient.post("UserisActive", params, new JsonHttpResponseHandler() {
@@ -172,8 +190,6 @@ public class ActiveUser extends AppCompatActivity implements View.OnClickListene
 
         }
     }
-
-    boolean doubleBackToExitPressedOnce = false;
 
     @Override
     public void onBackPressed() {

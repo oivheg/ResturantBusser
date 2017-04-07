@@ -10,14 +10,14 @@ import static android.content.Context.MODE_PRIVATE;
 
 public class User {
 
-    private int userid, masterid;
-    private String username, appid;
+    private int userid;
+    private String username, appid, MasterKey;
     private boolean active;
 
 //--------- constructor for the USEr class, not in use right now
-//    public User(int userid, int masterid, String username, String appid, boolean active) {
+//    public User(int userid, int MasterKey, String username, String appid, boolean active) {
 //        this.userid = userid;
-//        this.masterid = masterid;
+//        this.MasterKey = MasterKey;
 //        this.username = username;
 //        this.appid = appid;
 //        this.active = active;
@@ -31,12 +31,12 @@ public class User {
         this.userid = userid;
     }
 
-    public int getMasterid() {
-        return masterid;
+    public String getMasterKey() {
+        return MasterKey;
     }
 
-    public void setMasterid(int masterid) {
-        this.masterid = masterid;
+    public void setMasterKey(String MasterKey) {
+        this.MasterKey = MasterKey;
     }
 
     public String getUsername() {
