@@ -10,7 +10,7 @@ import com.example.oivhe.resturantbusser.FCM.FCMLogin;
 public class MainActivity extends AppCompatActivity {
 
     private static MainActivity ins;
-    String muser;
+    public String muser;
 
     SharedPreferences prefs = null;
 

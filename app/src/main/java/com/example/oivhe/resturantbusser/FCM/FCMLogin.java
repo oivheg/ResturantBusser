@@ -35,7 +35,7 @@ public class FCMLogin extends AppCompatActivity implements View.OnClickListener 
     private static final String TAG = "FCMLogin";
     User appuser = new User();
     String muser = "FCMolga";
-    String m_master;
+    String m_master, m_email;
     SharedPreferences prefs = null;
     EditText field_email;
     EditText field_pwd;
@@ -190,6 +190,46 @@ public class FCMLogin extends AppCompatActivity implements View.OnClickListener 
 
                 } else {
                     m_master = field_MasterKey.getText().toString();
+                    m_email = field_email.getText().toString();
+                    createAccount(field_email.getText().toString(), field_pwd.getText().toString());
+
+                }
+                break;
+
+            default:
+        }
+
+
+    }
+
+    @Override
+    public void onClick(View v) {
+
+        muser = field_userName.getText().toString();
+        prefs = getSharedPreferences("com.example.oivhe.resturantbusser", MODE_PRIVATE);
+        prefs.edit().putString("muser", muser).commit();
+        switch (v.getId()) {
+
+            case R.id.btnlogin:
+                signIn(field_email.getText().toString(), field_pwd.getText().toString());
+                break;
+            case R.id.btncreateac:
+
+                if (createuser) {
+//                    show the fields
+                    createuser = false;
+                    Button btncreate = (Button) findViewById(R.id.btncreateac);
+                    Button btnlogin = (Button) findViewById(R.id.btnlogin);
+                    btnlogin.setVisibility(View.GONE);
+                    btncreate.setText("Lag og logg inn");
+                    String tmpUser = field_userName.getText().toString();
+                    field_userName.setVisibility(View.VISIBLE);
+                    field_MasterKey.setVisibility(View.VISIBLE);
+
+
+                } else {
+                    m_master = field_MasterKey.getText().toString();
+                    m_email = field_email.getText().toString();
                     createAccount(field_email.getText().toString(), field_pwd.getText().toString());
 
                 }
@@ -224,6 +264,7 @@ public class FCMLogin extends AppCompatActivity implements View.OnClickListener 
                             params.put("Active", false);
                             params.put("AppId", getFCMToken());
                             params.put("MasterKey", m_master);
+                            params.put("Email", m_email);
                             BusserPost("CreateUser", params, "FCMLOGIN:   Created user usccesessfull push to server    :");
                         }
 
