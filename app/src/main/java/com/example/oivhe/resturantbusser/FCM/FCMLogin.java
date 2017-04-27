@@ -42,6 +42,7 @@ public class FCMLogin extends AppCompatActivity implements View.OnClickListener 
     EditText field_userName;
     EditText field_MasterKey;
     boolean createuser = true;
+    boolean doubleBackToExitPressedOnce = false;
     private FirebaseAuth mAuth;
     private FirebaseAuth.AuthStateListener mAuthListener;
 
@@ -202,45 +203,6 @@ public class FCMLogin extends AppCompatActivity implements View.OnClickListener 
 
     }
 
-    @Override
-    public void onClick(View v) {
-
-        muser = field_userName.getText().toString();
-        prefs = getSharedPreferences("com.example.oivhe.resturantbusser", MODE_PRIVATE);
-        prefs.edit().putString("muser", muser).commit();
-        switch (v.getId()) {
-
-            case R.id.btnlogin:
-                signIn(field_email.getText().toString(), field_pwd.getText().toString());
-                break;
-            case R.id.btncreateac:
-
-                if (createuser) {
-//                    show the fields
-                    createuser = false;
-                    Button btncreate = (Button) findViewById(R.id.btncreateac);
-                    Button btnlogin = (Button) findViewById(R.id.btnlogin);
-                    btnlogin.setVisibility(View.GONE);
-                    btncreate.setText("Lag og logg inn");
-                    String tmpUser = field_userName.getText().toString();
-                    field_userName.setVisibility(View.VISIBLE);
-                    field_MasterKey.setVisibility(View.VISIBLE);
-
-
-                } else {
-                    m_master = field_MasterKey.getText().toString();
-                    m_email = field_email.getText().toString();
-                    createAccount(field_email.getText().toString(), field_pwd.getText().toString());
-
-                }
-                break;
-
-            default:
-        }
-
-
-    }
-
     public void createAccount(String email, String passwd) {
         mAuth.createUserWithEmailAndPassword(email, passwd)
                 .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
@@ -323,8 +285,6 @@ public class FCMLogin extends AppCompatActivity implements View.OnClickListener 
             mAuth.removeAuthStateListener(mAuthListener);
         }
     }
-
-    boolean doubleBackToExitPressedOnce = false;
 
     @Override
     public void onBackPressed() {
