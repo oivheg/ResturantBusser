@@ -200,7 +200,6 @@ public class FCMLogin extends AppCompatActivity implements View.OnClickListener 
                     field_userName.setVisibility(View.VISIBLE);
                     field_MasterKey.setVisibility(View.VISIBLE);
 
-
                 } else {
                     m_master = field_MasterKey.getText().toString();
                     m_email = field_email.getText().toString();
@@ -234,7 +233,7 @@ public class FCMLogin extends AppCompatActivity implements View.OnClickListener 
                             RequestParams params = new RequestParams();
 
                             //params.put("UserId", 11);
-                            params.put("UserName", muser.toLowerCase());
+                            params.put("UserName", field_userName.getText().toString());
                             params.put("Active", false);
                             params.put("AppId", getFCMToken());
                             params.put("MasterKey", m_master);
