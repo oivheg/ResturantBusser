@@ -57,7 +57,7 @@ public class FCMLogin extends AppCompatActivity implements View.OnClickListener 
         field_pwd = (EditText) findViewById(R.id.field_password);
         field_userName = (EditText) findViewById(R.id.field_UserName);
         field_MasterKey = (EditText) findViewById(R.id.field_master);
-//        field_userName.setVisibility(View.GONE);
+        field_userName.setVisibility(View.GONE);
         field_MasterKey.setVisibility(View.GONE);
         mAuthListener = new FirebaseAuth.AuthStateListener() {
             @Override
@@ -93,8 +93,16 @@ public class FCMLogin extends AppCompatActivity implements View.OnClickListener 
     private void getuser() {
         // creates the paramets to be sent in the BusserRestClient.
         RequestParams params = new RequestParams();
-        params.put("UserName", muser.toLowerCase());
-        if (muser == null || muser.trim().isEmpty()) {
+//        params.put("UserName", muser.toLowerCase());
+        muser = field_email.getText().toString();
+
+        params.put("Appid", getFCMToken());
+        if (!field_email.getText().toString().equals("")) {
+            params.put("Email", field_email.getText().toString());
+        }
+
+
+        if (field_email == null) {
             FirebaseAuth.getInstance().signOut();
 //            Toast.makeText(FCMLogin.this, " Login ERROR, log in again", Toast.LENGTH_LONG).show();
             System.out.println("FCMLogin:  Login ERROR, log in again");
@@ -118,9 +126,13 @@ public class FCMLogin extends AppCompatActivity implements View.OnClickListener 
                     boolean active = jsonobject.getBoolean("Active");
 
                     updateUser(userid, MasterKey, username, appid, active);
+
+                    muser = appuser.getUsername();
+
                     RequestParams params = new RequestParams();
                     params.put("UserId", appuser.getUserid());
                     params.put("AppId", getFCMToken());
+                    String tmptoken = getFCMToken();
                     BusserPost("ClientAppId", params, "Active is sccesessfull push to server    :");
 
 
@@ -167,9 +179,9 @@ public class FCMLogin extends AppCompatActivity implements View.OnClickListener 
     @Override
     public void onClick(View v) {
 
-        muser = field_userName.getText().toString();
-        prefs = getSharedPreferences("com.example.oivhe.resturantbusser", MODE_PRIVATE);
-        prefs.edit().putString("muser", muser).commit();
+//        muser =field_email.getText().toString();
+//        prefs = getSharedPreferences("com.example.oivhe.resturantbusser", MODE_PRIVATE);
+//        prefs.edit().putString("muser", muser).commit();
         switch (v.getId()) {
 
             case R.id.btnlogin:

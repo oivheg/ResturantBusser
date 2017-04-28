@@ -16,6 +16,7 @@ import com.example.oivhe.resturantbusser.Communication.BusserRestClient;
 import com.example.oivhe.resturantbusser.MainActivity;
 import com.example.oivhe.resturantbusser.Observers.SettingsContentObserver;
 import com.example.oivhe.resturantbusser.R;
+import com.google.firebase.iid.FirebaseInstanceId;
 import com.google.firebase.messaging.FirebaseMessagingService;
 import com.google.firebase.messaging.RemoteMessage;
 import com.loopj.android.http.JsonHttpResponseHandler;
@@ -51,13 +52,15 @@ public class FCMMessageService extends FirebaseMessagingService {
         Runnable myRunnable = new Runnable() {
             @Override
             public void run() {
+
+
                 SharedPreferences prefs = null;
                 prefs = getSharedPreferences("com.example.oivhe.resturantbusser", MODE_PRIVATE);
                 // gets the stored username, rest is pulled from db
-                String muser = prefs.getString("muser", "");
+                String tkn = FirebaseInstanceId.getInstance().getToken();
                 RequestParams params = new RequestParams();
-                params.put("UserName", muser);
-                BusserRestClient.post("Msgreceived", params, new JsonHttpResponseHandler() {
+                params.put("AppId", tkn);
+                BusserRestClient.post("Msgreceived?" + params, null, new JsonHttpResponseHandler() {
                     public void onSuccess(int statusCode, Header headers[], JSONObject success) {
                         // Root JSON in response is an dictionary i.e { "data : [ ... ] }
                         // Handle resulting parsed JSON response here
@@ -77,9 +80,9 @@ public class FCMMessageService extends FirebaseMessagingService {
 
 //        Refreshmaster(remoteMessage.getData());
 
-        Intent i = new Intent(getBaseContext(), MainActivity.class);
-        i.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-        getApplication().startActivity(i);
+//        Intent i = new Intent(getBaseContext(), MainActivity.class);
+//        i.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+//        getApplication().startActivity(i);
 
 //        showNotification(remoteMessage.getData().get("message"));
     }

@@ -14,6 +14,7 @@ import android.widget.Toast;
 import com.example.oivhe.resturantbusser.Communication.BusserRestClient;
 import com.example.oivhe.resturantbusser.R;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.iid.FirebaseInstanceId;
 import com.loopj.android.http.JsonHttpResponseHandler;
 import com.loopj.android.http.RequestParams;
 
@@ -25,7 +26,7 @@ import cz.msebera.android.httpclient.Header;
 
 public class ActiveUser extends AppCompatActivity implements View.OnClickListener {
     public boolean isActive = false;
-    Button btnwork, btnhome, btnlogout;
+    Button btnwork, btnlogout;
     String mUser;
     int muserId;
     boolean doubleBackToExitPressedOnce = false;
@@ -84,16 +85,12 @@ public class ActiveUser extends AppCompatActivity implements View.OnClickListene
                 }
 
 
-//            case R.id.btnhome:
-//
-////                currentBTN.setVisibility(View.GONE);
-////                btnwork.setVisibility(View.VISIBLE);
-//                CommunicateDB(mUser, true, true);
-//                toast = Toast.makeText(this, "btn Home was clicked", Toast.LENGTH_SHORT);
-//                toast.show();
-//                break;
             case R.id.btnlogout:
                 FirebaseAuth.getInstance().signOut();
+//
+//                SharedPreferences prefs = getSharedPreferences("com.example.oivhe.resturantbusser", MODE_PRIVATE);
+//        prefs.edit().putString("muser", "").commit();
+
                 CommunicateDB(mUser, false, true, true);
                 finish();
                 break;
@@ -131,7 +128,8 @@ public class ActiveUser extends AppCompatActivity implements View.OnClickListene
         } else {
 
             RequestParams params = new RequestParams();
-            params.put("UserName", user.trim());
+            String tkn = FirebaseInstanceId.getInstance().getToken();
+            params.put("Appid", tkn);
             BusserRestClient.get("FindUser", params, new JsonHttpResponseHandler() {
                 //client1.get(url, new JsonHttpResponseHandler() {
                 @Override
