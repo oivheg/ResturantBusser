@@ -62,19 +62,7 @@ public class FCMLogin extends AppCompatActivity implements View.OnClickListener 
         mAuthListener = new FirebaseAuth.AuthStateListener() {
             @Override
             public void onAuthStateChanged(@NonNull FirebaseAuth firebaseAuth) {
-                FirebaseUser user = firebaseAuth.getCurrentUser();
-                if (user != null) {
-                    // User is signed in
-                    Log.d(TAG, "onAuthStateChanged:signed_in:" + user.getUid());
-                    System.out.println("FCMLogin:  User is already logged in");
-//                    Toast.makeText(FCMLogin.this, " User is already logged in.",
-//                            Toast.LENGTH_LONG).show();
-                    // gets the user
-                    getuser();
-                } else {
-                    // User is signed out
-                    Log.d(TAG, "onAuthStateChanged:signed_out");
-                }
+                CheckUser(firebaseAuth);
                 // ...
             }
         };
@@ -90,27 +78,52 @@ public class FCMLogin extends AppCompatActivity implements View.OnClickListener 
 //        });
     }
 
+    private void CheckUser(@NonNull FirebaseAuth firebaseAuth) {
+        FirebaseUser user = firebaseAuth.getCurrentUser();
+        if (user != null) {
+            // User is signed in
+            Log.d(TAG, "onAuthStateChanged:signed_in:" + user.getUid());
+            System.out.println("FCMLogin:  User is already logged in");
+//                    Toast.makeText(FCMLogin.this, " User is already logged in.",
+//                            Toast.LENGTH_LONG).show();
+            // gets the user
+            RequestParams params = new RequestParams();
+            params.put("Appid", getFCMToken());
+            FindUser(params);
+//                    getuser();
+        } else {
+            // User is signed out
+            Log.d(TAG, "onAuthStateChanged:signed_out");
+        }
+    }
+
     private void getuser() {
         // creates the paramets to be sent in the BusserRestClient.
         RequestParams params = new RequestParams();
 //        params.put("UserName", muser.toLowerCase());
-        muser = field_email.getText().toString();
+//        muser = field_email.getText().toString();
 
         params.put("Appid", getFCMToken());
         if (!field_email.getText().toString().equals("")) {
             params.put("Email", field_email.getText().toString());
-        }
-
-
-        if (field_email == null) {
+            muser = field_email.getText().toString();
+        } else if (getFCMToken() == "") {
             FirebaseAuth.getInstance().signOut();
-//            Toast.makeText(FCMLogin.this, " Login ERROR, log in again", Toast.LENGTH_LONG).show();
+            Toast.makeText(FCMLogin.this, " Login ERROR, log in again", Toast.LENGTH_LONG).show();
             System.out.println("FCMLogin:  Login ERROR, log in again");
             return;
         }
 
+
+        params.put("Appid", getFCMToken());
+
         // The first BusserRestclient. get should be done to a general method so "others" can use it.
 
+        FindUser(params);
+        CheckUser(mAuth);
+    }
+
+    private void FindUser(RequestParams params) {
         BusserRestClient.get("finduser", params, new JsonHttpResponseHandler() {
             public void onSuccess(int statusCode, Header headers[], JSONObject success) {
                 // Root JSON in response is an dictionary i.e { "data : [ ... ] }
@@ -170,8 +183,8 @@ public class FCMLogin extends AppCompatActivity implements View.OnClickListener 
     private String getFCMToken() {
 
         String tkn = FirebaseInstanceId.getInstance().getToken();
-        Toast.makeText(FCMLogin.this, "Current token [" + tkn + "]",
-                Toast.LENGTH_LONG).show();
+//        Toast.makeText(FCMLogin.this, "Current token [" + tkn + "]",
+//                Toast.LENGTH_LONG).show();
         Log.d("Ap:FCM", "Token [" + tkn + "]");
         return tkn;
     }
@@ -185,6 +198,7 @@ public class FCMLogin extends AppCompatActivity implements View.OnClickListener 
         switch (v.getId()) {
 
             case R.id.btnlogin:
+                getuser();
                 signIn(field_email.getText().toString(), field_pwd.getText().toString());
                 break;
             case R.id.btncreateac:
@@ -204,7 +218,7 @@ public class FCMLogin extends AppCompatActivity implements View.OnClickListener 
                     m_master = field_MasterKey.getText().toString();
                     m_email = field_email.getText().toString();
                     createAccount(field_email.getText().toString(), field_pwd.getText().toString());
-
+                    getuser();
                 }
                 break;
 

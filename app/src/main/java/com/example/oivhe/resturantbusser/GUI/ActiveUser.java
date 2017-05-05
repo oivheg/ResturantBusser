@@ -29,6 +29,7 @@ public class ActiveUser extends AppCompatActivity implements View.OnClickListene
     Button btnwork, btnlogout;
     String mUser;
     int muserId;
+    String tkn;
     boolean doubleBackToExitPressedOnce = false;
 
     @Override
@@ -43,7 +44,7 @@ public class ActiveUser extends AppCompatActivity implements View.OnClickListene
         //btnhome = (Button) findViewById(R.id.btnhome);
         btnlogout = (Button) findViewById(R.id.btnlogout);
         CommunicateDB(mUser, false, false, false);
-
+        tkn = FirebaseInstanceId.getInstance().getToken();
 
     }
 
@@ -65,7 +66,7 @@ public class ActiveUser extends AppCompatActivity implements View.OnClickListene
     public void onClick(View v) {
         Button currentBTN = (Button) findViewById(v.getId());
         Toast toast;
-        mUser = mUser.trim();
+//        mUser = mUser.trim();
         switch (v.getId()) {
             case R.id.btnwork:
 // btn GONE & visible will be removed after psot request is working
@@ -101,16 +102,18 @@ public class ActiveUser extends AppCompatActivity implements View.OnClickListene
 
     public void CommunicateDB(String user, boolean _isActive, boolean update, boolean rmvAppId) {
         if (update) {
+            String logout = "";
             RequestParams params = new RequestParams();
             params.put("UserId", muserId);
             params.put("UserName", user);
+            params.put("Appid", tkn);
             params.put("Active", _isActive);
             if (rmvAppId) {
-                params.put("AppID", "Logget out");
+                logout = "?logout=True";
                 params.put("Active", false);
             }
             isActive = _isActive;
-            BusserRestClient.post("UserisActive", params, new JsonHttpResponseHandler() {
+            BusserRestClient.post("UserisActive" + logout, params, new JsonHttpResponseHandler() {
                 public void onSuccess(int statusCode, Header headers[], JSONObject success) {
                     // Root JSON in response is an dictionary i.e { "data : [ ... ] }
                     // Handle resulting parsed JSON response here
@@ -128,7 +131,7 @@ public class ActiveUser extends AppCompatActivity implements View.OnClickListene
         } else {
 
             RequestParams params = new RequestParams();
-            String tkn = FirebaseInstanceId.getInstance().getToken();
+
             params.put("Appid", tkn);
             BusserRestClient.get("FindUser", params, new JsonHttpResponseHandler() {
                 //client1.get(url, new JsonHttpResponseHandler() {
