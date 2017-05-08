@@ -12,6 +12,7 @@ import android.widget.Button;
 import android.widget.Toast;
 
 import com.example.oivhe.resturantbusser.Communication.BusserRestClient;
+import com.example.oivhe.resturantbusser.FCM.FCMMessageService;
 import com.example.oivhe.resturantbusser.R;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.iid.FirebaseInstanceId;
@@ -87,12 +88,21 @@ public class ActiveUser extends AppCompatActivity implements View.OnClickListene
 
 
             case R.id.btnlogout:
+                try {
+                    FCMMessageService.getInstace().StopVibrations();
+                } catch (Exception e) {
+
+                }
+
+
                 FirebaseAuth.getInstance().signOut();
+
 //
 //                SharedPreferences prefs = getSharedPreferences("com.example.oivhe.resturantbusser", MODE_PRIVATE);
 //        prefs.edit().putString("muser", "").commit();
 
                 CommunicateDB(mUser, false, true, true);
+
                 finish();
                 break;
             default:

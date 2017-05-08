@@ -36,24 +36,18 @@ import cz.msebera.android.httpclient.Header;
 
 public class FCMMessageService extends FirebaseMessagingService {
     static Timer myTimer = new Timer();
-    TimerTask myTimerTask = new TimerTask() {
-        @Override
-        public void run() {
-            Vibrator v = (Vibrator) getSystemService(Context.VIBRATOR_SERVICE);
-            // Vibrate for 500 milliseconds
-//                v.vibrate(500);
+    private static FCMMessageService ins;
 
-            //Longer vibrations
-            long[] vibPatterns = {200, 500, 350, 500, 350, 1000};
-            v.vibrate(vibPatterns, -1);
-        }
-    };
+    TimerTask myTimerTask = null;
     SettingsContentObserver mSettingsContentObserver = null;
 
+    public static FCMMessageService getInstace() {
+        return ins;
+    }
     @Override
     public void onCreate() {
         super.onCreate();
-
+        ins = this;
 
     }
 
@@ -64,9 +58,23 @@ public class FCMMessageService extends FirebaseMessagingService {
 
         if (remoteMessage.getData().size() > 0) {
             System.out.print("Message data payload: " + remoteMessage.getData());
-
+            StopVibrations();
             if (remoteMessage.getData().get("title") != null) {
+
                 myTimer = new Timer();
+                myTimerTask = new TimerTask() {
+                    @Override
+                    public void run() {
+                        Vibrator v = (Vibrator) getSystemService(Context.VIBRATOR_SERVICE);
+                        // Vibrate for 500 milliseconds
+//                v.vibrate(500);
+
+                        //Longer vibrations
+                        long[] vibPatterns = {200, 500, 350, 500, 350, 1000, 500, 350, 500, 350, 1000};
+                        v.vibrate(vibPatterns, -1);
+                    }
+                };
+
                 // takes the resived notficication and informs user
                 sendNotification(remoteMessage.getData().get("title"));
                 //        sends message recived back to master,
@@ -75,10 +83,12 @@ public class FCMMessageService extends FirebaseMessagingService {
                 switch (remoteMessage.getData().get("Action")) {
                     case "cancelVibration":
 
+                        if (myTimerTask != null) {
+                            myTimerTask.cancel();
 
-                        myTimerTask.cancel();
+                        }
                         myTimer.cancel();
-
+                        myTimer.purge();
 
                         break;
                     case "recieved":
@@ -100,6 +110,19 @@ public class FCMMessageService extends FirebaseMessagingService {
 //        getApplication().startActivity(i);
 
 //        showNotification(remoteMessage.getData().get("message"));
+    }
+
+    public void StopVibrations() {
+        if (myTimer != null) {
+
+            if (myTimerTask != null) {
+                myTimerTask.cancel();
+
+            }
+            myTimer.cancel();
+            myTimer.purge();
+
+        }
     }
 
     private void InformMaster() {
@@ -138,7 +161,7 @@ public class FCMMessageService extends FirebaseMessagingService {
     private void sendNotification(String messageBody) {
 // Activates vibration on timer
 
-        myTimer.schedule(myTimerTask, 0, 10000); // First is delay until i starts first time, second option when it wil activate again, 10000 is 10 secons.
+        myTimer.schedule(myTimerTask, 0, 30000); // First is delay until i starts first time, second option when it wil activate again, 10000 is 10 secons.
 
 
         Intent intent = new Intent(this, MainActivity.class);
