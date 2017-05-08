@@ -25,6 +25,9 @@ import com.loopj.android.http.RequestParams;
 
 import org.json.JSONObject;
 
+import java.util.Timer;
+import java.util.TimerTask;
+
 import cz.msebera.android.httpclient.Header;
 
 /**
@@ -32,6 +35,19 @@ import cz.msebera.android.httpclient.Header;
  */
 
 public class FCMMessageService extends FirebaseMessagingService {
+    static Timer myTimer = new Timer();
+    TimerTask myTimerTask = new TimerTask() {
+        @Override
+        public void run() {
+            Vibrator v = (Vibrator) getSystemService(Context.VIBRATOR_SERVICE);
+            // Vibrate for 500 milliseconds
+//                v.vibrate(500);
+
+            //Longer vibrations
+            long[] vibPatterns = {200, 500, 350, 500, 350, 1000};
+            v.vibrate(vibPatterns, -1);
+        }
+    };
     SettingsContentObserver mSettingsContentObserver = null;
 
     @Override
@@ -45,10 +61,48 @@ public class FCMMessageService extends FirebaseMessagingService {
     public void onMessageReceived(RemoteMessage remoteMessage) {
         super.onMessageReceived(remoteMessage);
 
-// takes the resived notficication and informs user
-        sendNotification(remoteMessage.getData().get("message"));
 
-//        sends message recived back to master,
+        if (remoteMessage.getData().size() > 0) {
+            System.out.print("Message data payload: " + remoteMessage.getData());
+
+            if (remoteMessage.getData().get("title") != null) {
+                myTimer = new Timer();
+                // takes the resived notficication and informs user
+                sendNotification(remoteMessage.getData().get("title"));
+                //        sends message recived back to master,
+                InformMaster();
+            } else if (remoteMessage.getData().get("Action") != null) {
+                switch (remoteMessage.getData().get("Action")) {
+                    case "cancelVibration":
+
+
+                        myTimerTask.cancel();
+                        myTimer.cancel();
+
+
+                        break;
+                    case "recieved":
+
+                        break;
+                }
+            }
+
+
+        } else {
+
+        }
+
+
+//        Refreshmaster(remoteMessage.getData());
+
+//        Intent i = new Intent(getBaseContext(), MainActivity.class);
+//        i.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+//        getApplication().startActivity(i);
+
+//        showNotification(remoteMessage.getData().get("message"));
+    }
+
+    private void InformMaster() {
         Handler mainHandler = new Handler(Looper.getMainLooper());
         Runnable myRunnable = new Runnable() {
             @Override
@@ -78,23 +132,20 @@ public class FCMMessageService extends FirebaseMessagingService {
         };
 
         mainHandler.post(myRunnable);
-
-//        Refreshmaster(remoteMessage.getData());
-
-//        Intent i = new Intent(getBaseContext(), MainActivity.class);
-//        i.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-//        getApplication().startActivity(i);
-
-//        showNotification(remoteMessage.getData().get("message"));
     }
 
 
     private void sendNotification(String messageBody) {
+// Activates vibration on timer
+
+        myTimer.schedule(myTimerTask, 0, 10000); // First is delay until i starts first time, second option when it wil activate again, 10000 is 10 secons.
+
+
         Intent intent = new Intent(this, MainActivity.class);
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
         PendingIntent pendingIntent = PendingIntent.getActivity(this, 0 /* Request code */, intent,
                 PendingIntent.FLAG_ONE_SHOT);
-        long[] vibPatterns = {200, 2000, 200, 2000, 200, 2000, 200, 2000, 200, 2000};
+        long[] vibPatterns = {200, 2000, 200, 2000, 200, 2000, 200, 2000};
         Uri defaultSoundUri = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
         NotificationCompat.Builder notificationBuilder = (NotificationCompat.Builder) new NotificationCompat.Builder(this)
                 .setSmallIcon(R.drawable.cast_ic_notification_small_icon)
@@ -110,12 +161,6 @@ public class FCMMessageService extends FirebaseMessagingService {
 
                 //LED
                 .setLights(Color.RED, 3000, 3000);
-
-
-        Vibrator v = (Vibrator) getSystemService(Context.VIBRATOR_SERVICE);
-// Vibrate for 500 milliseconds
-        v.vibrate(vibPatterns, 5);
-
 
 
         NotificationManager notificationManager =
