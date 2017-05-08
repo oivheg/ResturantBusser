@@ -44,7 +44,7 @@ public class ActiveUser extends AppCompatActivity implements View.OnClickListene
         //btnhome = (Button) findViewById(R.id.btnhome);
         btnlogout = (Button) findViewById(R.id.btnlogout);
         CommunicateDB(mUser, false, false, false);
-        tkn = FirebaseInstanceId.getInstance().getToken();
+
 
     }
 
@@ -101,6 +101,7 @@ public class ActiveUser extends AppCompatActivity implements View.OnClickListene
     }
 
     public void CommunicateDB(String user, boolean _isActive, boolean update, boolean rmvAppId) {
+        tkn = FirebaseInstanceId.getInstance().getToken();
         if (update) {
             String logout = "";
             RequestParams params = new RequestParams();

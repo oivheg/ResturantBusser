@@ -10,6 +10,7 @@ import android.media.RingtoneManager;
 import android.net.Uri;
 import android.os.Handler;
 import android.os.Looper;
+import android.os.Vibrator;
 import android.support.v7.app.NotificationCompat;
 
 import com.example.oivhe.resturantbusser.Communication.BusserRestClient;
@@ -93,7 +94,7 @@ public class FCMMessageService extends FirebaseMessagingService {
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
         PendingIntent pendingIntent = PendingIntent.getActivity(this, 0 /* Request code */, intent,
                 PendingIntent.FLAG_ONE_SHOT);
-
+        long[] vibPatterns = {200, 2000, 200, 2000, 200, 2000, 200, 2000, 200, 2000};
         Uri defaultSoundUri = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
         NotificationCompat.Builder notificationBuilder = (NotificationCompat.Builder) new NotificationCompat.Builder(this)
                 .setSmallIcon(R.drawable.cast_ic_notification_small_icon)
@@ -104,10 +105,17 @@ public class FCMMessageService extends FirebaseMessagingService {
                 .setContentIntent(pendingIntent)
                 //Vibration
 
-                .setVibrate(new long[]{200, 2000, 200, 2000, 200, 1000})
+//                .setVibrate(vibPatterns)
+
 
                 //LED
                 .setLights(Color.RED, 3000, 3000);
+
+
+        Vibrator v = (Vibrator) getSystemService(Context.VIBRATOR_SERVICE);
+// Vibrate for 500 milliseconds
+        v.vibrate(vibPatterns, 5);
+
 
 
         NotificationManager notificationManager =
